@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "pytest-api"
+version = "0.1.0"
+description = "Автотесты для REST API сервиса бронирования"
+authors = ["Ilya <northenligth6899@gmail.com>"]
+readme = "README.md"
+packages = [{include = "api"}, {include = "models"}, {include = "fixtures"}, {include = "tests"}, {include = "utils"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "^2.31.0"
+python-dotenv = "^1.0.0"
+pydantic = "^2.5.0"          # Для моделей данных и валидации
+faker = "^22.0.0"            # Генерация тестовых данных
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.1.0"
+allure-pytest = "^2.13.5"
+pytest-xdist = {version = "^3.5.0", optional = true}   # Для параллельного запуска
+pytest-sugar = {version = "^1.0.0", optional = true}   # Улучшенный вывод в консоли
+
+[tool.poetry.scripts]
+test = "pytest"                     # poetry run test
+test-allure = "pytest --alluredir=allure-results"  # poetry run test-allure
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = "-v --tb=short --strict-markers --alluredir=allure-results"
+markers = [
+    "smoke: Критические проверки (smoke)",
+    "regression: Полный регресс",
+    "auth: Тесты авторизации",
+    "booking: Тесты бронирования",
+    "health: Health-check",
+    "contract: Контрактные тесты",
+    "slow: Длительные тесты",
+]
