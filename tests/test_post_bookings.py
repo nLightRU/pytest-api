@@ -1,7 +1,11 @@
+import allure
 import pytest
 import requests
 from models.booking import CreateBookingModel, BookingDates, CreateBookingModelNoField, BookingResponseModel
 
+@allure.feature("API")
+@allure.story("Create")
+@allure.title('Успешное создание бронирования')
 def test_create(booking_client):
     fields = {
         'firstname':'Naruto',
@@ -21,6 +25,9 @@ def test_create(booking_client):
     assert resp.status_code == requests.codes['ok']
     assert resp_model.booking == model
 
+@allure.feature("API")
+@allure.story("Create")
+@allure.title('Попытка создать без обязательного поля')
 @pytest.mark.parametrize('missing_field', ['firstname', 'lastname', 'totalprice', 'depositpaid', 'bookingdates'])
 def test_booking_no_field(booking_client, missing_field):
     fields = {
