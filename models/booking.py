@@ -25,3 +25,12 @@ class BookingResponseModel(BaseModel):
 
 class CreateBookingModel(BookingModel):
     ...
+
+
+class CreateBookingModelNoField(BaseModel):
+    firstname: str | None = None
+    lastname: str | None = None
+    totalprice: int | None = None
+    depositpaid: bool | None = None
+    bookingdates: BookingDates | None = None
+    addtionalneeds: str | None = None
