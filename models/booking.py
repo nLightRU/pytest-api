@@ -30,3 +30,12 @@ class CreateBookingModelNoField(BaseModel):
     depositpaid: bool | None = None
     bookingdates: BookingDates | None = None
     addtionalneeds: str | None = None
+
+
+class UpdateBookingModel(BaseModel):
+    firstname: str
+    lastname: str
+    totalprice: int = Field(gt=0)
+    depositpaid: bool
+    bookingdates: BookingDates
+    additionalneeds: str | None = None
