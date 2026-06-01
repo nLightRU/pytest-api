@@ -1,7 +1,7 @@
 import allure
 import requests
 
-from models.booking import BookingDates, UpdateBookingModel
+from models.booking import BookingDates, UpdateBookingModel, CreateBookingModel
 
 @allure.feature("API")
 @allure.story("Update")
@@ -20,8 +20,11 @@ def test_update_ok(booking_auth_client):
     model = UpdateBookingModel(**fields)
 
     resp = booking_auth_client.put_booking(bookingid=bookingid, model=model)
+    model = CreateBookingModel(**fields)
+    resp_model = CreateBookingModel(**resp.json())
     
     assert resp.status_code == requests.codes['ok']
+    assert model == resp_model
 
 
 @allure.feature("API")
