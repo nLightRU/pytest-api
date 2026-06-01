@@ -11,16 +11,12 @@ class BookingModel(BaseModel):
     totalprice: int = Field(gt=0)
     depositpaid: bool
     bookingdates: BookingDates
-    addtionalneeds: str | None = None
+    additionalneeds: str | None = None
 
 
 class BookingResponseModel(BaseModel):
-    firstname: str
-    lastname: str
-    totalprice: int = Field(gt=0)
-    depositpaid: bool
-    bookingdates: BookingDates
-    addtionalneed: str | None = None
+    bookingid: int
+    booking: CreateBookingModel
 
 
 class CreateBookingModel(BookingModel):
