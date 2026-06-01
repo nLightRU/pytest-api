@@ -12,6 +12,14 @@ class BookingClient:
         self.token = None
         self.auth_cookies = None
     
+    def _make_url(self,bookingid: int | None = None):
+        url = f'{self.base_url}/booking'
+
+        if bookingid:
+            url += f'/{bookingid}'
+        
+        return url
+
     def auth(self):
         url = self.base_url + '/auth'
         username, password = os.getenv('AUTH_USERNAME'), os.getenv('AUTH_PASSWORD')
@@ -27,22 +35,30 @@ class BookingClient:
         self.auth_cookies = None
 
     def get_bookings(self):
-        return r.get(self.base_url + '/booking')
+        url = self._make_url()
+        return r.get(url=url)
     
     def get_booking_id(self, _id: int):
-        return r.get(self.base_url + '/booking/' + str(_id))
+        url = self._make_url(bookingid=_id)
+        return r.get(url=url)
     
     def post_booking(self, model: CreateBookingModel):
         payload = model.model_dump()
-        resp = r.post(self.base_url + '/booking', json=payload)
+        url = self._make_url()
+        resp = r.post(url=url, json=payload)
         return resp
     
     def put_booking(self, bookingid, model:UpdateBookingModel):
-        url = self.base_url + f'/booking/{bookingid}'
+        url = self._make_url(bookingid=bookingid)
         payload = model.model_dump()
         resp = r.put(url=url, cookies=self.auth_cookies, json=payload)
         return resp
 
-    def patch_booking(self, _id, payload):
+    def patch_booking(self, bookingid: int, payload):
         ...
+    
+    def delete_booking(self, bookingid: int):
+        url = self._make_url(bookingid=bookingid)
+        resp = r.delete(url=url, cookies=self.auth_cookies)
+        return resp
     
