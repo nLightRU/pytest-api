@@ -10,9 +10,12 @@ class AuthenticationError(Exception):
     pass
 
 class BookingClient:
-    def __init__(self):
+    def __init__(self, timeout=10):
         self.base_url = os.getenv('BOOKING_BASE_URL')
+        self.timeout = timeout
         self.token = None
+        self.session = r.Session()
+        self.session.headers.update({'Content-Type':'application/json'})
         self.auth_cookies = None
     
     def _make_url(self,bookingid: int | None = None):
@@ -30,8 +33,8 @@ class BookingClient:
             creds['username'] = username
         if password:
             creds['password'] = password
-            
-        return r.post(url=url, json=creds)
+
+        return self.session.post(url=url, json=creds, timeout=self.timeout)
 
     def auth(self, username: str = None, password:str = None):
         """
@@ -70,22 +73,22 @@ class BookingClient:
 
     def get_bookings(self):
         url = self._make_url()
-        return r.get(url=url)
+        return self.session.get(url=url, timeout=self.timeout)
     
     def get_booking_id(self, _id: int):
         url = self._make_url(bookingid=_id)
-        return r.get(url=url)
+        return self.session.get(url=url, timeout=self.timeout)
     
     def post_booking(self, model: CreateBookingModel):
         payload = model.model_dump()
         url = self._make_url()
-        resp = r.post(url=url, json=payload)
+        resp = self.session.post(url=url, json=payload, timeout=self.timeout)
         return resp
     
     def put_booking(self, bookingid, model:UpdateBookingModel):
         url = self._make_url(bookingid=bookingid)
         payload = model.model_dump()
-        resp = r.put(url=url, cookies=self.auth_cookies, json=payload)
+        resp = self.session.put(url=url, cookies=self.auth_cookies, json=payload, timeout=self.timeout)
         return resp
 
     def patch_booking(self, bookingid: int, payload):
@@ -93,6 +96,6 @@ class BookingClient:
     
     def delete_booking(self, bookingid: int):
         url = self._make_url(bookingid=bookingid)
-        resp = r.delete(url=url, cookies=self.auth_cookies)
+        resp = r.delete(url=url, cookies=self.auth_cookies, timeout=self.timeout)
         return resp
     
