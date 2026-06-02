@@ -12,13 +12,18 @@ def auth_creds():
         'password': os.getenv('AUTH_PASSWORD')
     }
 
-@pytest.fixture(scope='session')
+
+@pytest.fixture(scope='function')
 def booking_client():
     return BookingClient()
 
+
 @pytest.fixture(scope='session')
-def booking_auth_client(auth_creds):
+def booking_auth_client():
+    auth_creds = {
+        'username': os.getenv('AUTH_USERNAME'),
+        'password': os.getenv('AUTH_PASSWORD')
+    }
     client = BookingClient()
     client.auth(username=auth_creds['username'], password=auth_creds['password'])
     return client
-

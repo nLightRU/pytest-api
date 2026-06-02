@@ -6,6 +6,9 @@ from models.booking import CreateBookingModel, UpdateBookingModel
 
 load_dotenv()
 
+class AuthenticationError(Exception):
+    pass
+
 class BookingClient:
     def __init__(self):
         self.base_url = os.getenv('BOOKING_BASE_URL')
@@ -20,15 +23,46 @@ class BookingClient:
         
         return url
 
+    def _do_auth_request(self, username:str, password:str):
+        url = f'{self.base_url}/auth'
+        creds = dict()
+        if username:
+            creds['username'] = username
+        if password:
+            creds['password'] = password
+            
+        return r.post(url=url, json=creds)
+
     def auth(self, username: str = None, password:str = None):
-        url = self.base_url + '/auth'
-        creds = {
-            'username': username,
-            'password': password
-        }
-        token = r.post(url=url, json=creds).json()['token']
-        self.token = token
+        """
+            Авторизует клиента (получает и сохраняет токен).
+            Выбрасывает ValueError, если не переданы учётные данные.
+        """
+        if not username:
+            raise ValueError('missing username')
+        if not password:
+            raise ValueError('missing password')
+
+        resp = self._do_auth_request(username=username, password=password)
+
+        if resp.status_code != r.codes['ok']:
+            raise AuthenticationError(
+                f"Ошибка авторизации: {resp.status_code}, тело: {resp.text}"
+            )
+        
+        data = resp.json()
+        if "token" not in data:
+            raise AuthenticationError("В ответе отсутствует поле 'token'")
+        
+        self.token = data['token']
         self.auth_cookies = {'token': self.token}
+
+    def try_auth(self, username: str = None, password: str = None):
+        '''
+            Тестовый метод: выполняет запрос к /auth без сохранения токена
+            и без проверок.
+        '''
+        return self._do_auth_request(username=username, password=password)
 
     def clear_auth(self):
         self.token = None
