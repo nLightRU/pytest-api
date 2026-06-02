@@ -20,10 +20,11 @@ def test_update_ok(booking_auth_client):
     model = UpdateBookingModel(**fields)
 
     resp = booking_auth_client.put_booking(bookingid=bookingid, model=model)
+    assert resp.status_code == requests.codes['ok']
+
     model = CreateBookingModel(**fields)
     resp_model = CreateBookingModel(**resp.json())
     
-    assert resp.status_code == requests.codes['ok']
     assert model == resp_model
 
 

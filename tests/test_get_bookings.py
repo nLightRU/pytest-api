@@ -12,7 +12,7 @@ def test_bookings(booking_client):
 @allure.feature("API")
 @allure.story("Read")
 @allure.title("Проверка чтения бронирования по ID")
-@pytest.mark.parametrize('booking_id', [1, 15])
+@pytest.mark.parametrize('booking_id', [123, 1024])
 def test_bookings_id(booking_client, booking_id):
     resp = booking_client.get_booking_id(str(booking_id))
     assert resp.status_code == 200
