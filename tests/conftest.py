@@ -1,13 +1,24 @@
-from api.client import BookingClient
+from dotenv import load_dotenv
+import os
 import pytest
+from api.client import BookingClient
 
+load_dotenv()
+
+@pytest.fixture(scope='session')
+def auth_creds():
+    return {
+        'username': os.getenv('AUTH_USERNAME'),
+        'password': os.getenv('AUTH_PASSWORD')
+    }
 
 @pytest.fixture(scope='session')
 def booking_client():
     return BookingClient()
 
 @pytest.fixture(scope='session')
-def booking_auth_client():
+def booking_auth_client(auth_creds):
     client = BookingClient()
-    client.auth()
+    client.auth(username=auth_creds['username'], password=auth_creds['password'])
     return client
+

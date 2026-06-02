@@ -20,14 +20,14 @@ class BookingClient:
         
         return url
 
-    def auth(self):
+    def auth(self, username: str = None, password:str = None):
         url = self.base_url + '/auth'
-        username, password = os.getenv('AUTH_USERNAME'), os.getenv('AUTH_PASSWORD')
         creds = {
             'username': username,
             'password': password
         }
-        self.token = r.post(url=url, json=creds).json()['token']
+        token = r.post(url=url, json=creds).json()['token']
+        self.token = token
         self.auth_cookies = {'token': self.token}
 
     def clear_auth(self):
