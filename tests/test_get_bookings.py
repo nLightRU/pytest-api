@@ -1,5 +1,6 @@
 import allure
 import pytest
+import requests
 
 @allure.feature("API")
 @allure.story("Read")
@@ -12,9 +13,13 @@ def test_bookings(booking_client):
 @allure.feature("API")
 @allure.story("Read")
 @allure.title("Проверка чтения бронирования по ID")
-@pytest.mark.parametrize('booking_id', [123, 1024])
-def test_bookings_id(booking_client, booking_id):
-    resp = booking_client.get_booking_id(str(booking_id))
+def test_bookings_id(booking_auth_client, booking_sample_create_model):
+    resp = booking_auth_client.post_booking(booking_sample_create_model)
+    if resp.status_code != requests.codes['ok']:
+        raise Exception()
+
+    bookingid = resp.json()['bookingid']
+    resp = booking_auth_client.get_booking_id(str(bookingid))
     assert resp.status_code == 200
 
 

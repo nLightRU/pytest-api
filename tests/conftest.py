@@ -1,9 +1,10 @@
 import os
 from dotenv import load_dotenv
+import datetime as dt
 import pytest
 
 from api.client import BookingClient
-from models.booking import CreateBookingModel
+from models.booking import CreateBookingModel, BookingDates
 
 load_dotenv()
 
@@ -32,8 +33,46 @@ def booking_client():
 
 
 @pytest.fixture(scope='function')
-def booking_model():
-    return 
+def booking_sample_create_model():
+    today = dt.date.today()
+
+    start = today + dt.timedelta(days=10)
+    end = today + dt.timedelta(days=20)
+
+    checkin = start.strftime('%Y-%m-%d')
+    checkout = end.strftime('%Y-%m-%d')
+
+    fields = {
+        'firstname': 'Naruto',
+        'lastname': 'Uzumaki',
+        'totalprice': 111,
+        'depositpaid': True,
+        'bookingdates': BookingDates(checkin=checkin,checkout=checkout)
+    }
+
+    model = CreateBookingModel(**fields)
+
+    return model
 
 
+@pytest.fixture(scope='function')
+def booking_sample_update_model():
+    today = dt.date.today()
 
+    start = today + dt.timedelta(days=15)
+    end = today + dt.timedelta(days=25)
+
+    checkin = start.strftime('%Y-%m-%d')
+    checkout = end.strftime('%Y-%m-%d')
+
+    fields = {
+        'firstname': 'Spike',
+        'lastname': 'Spiegel',
+        'totalprice': 222,
+        'depositpaid': False,
+        'bookingdates': BookingDates(checkin=checkin,checkout=checkout)
+    }
+
+    model = CreateBookingModel(**fields)
+
+    return model

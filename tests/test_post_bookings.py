@@ -1,29 +1,18 @@
 import allure
 import pytest
 import requests
-from models.booking import CreateBookingModel, BookingDates, CreateBookingModelNoField, BookingResponseModel
+from models.booking import BookingDates, CreateBookingModelNoField, BookingResponseModel
 
 @allure.feature("API")
 @allure.story("Create")
 @allure.title('Успешное создание бронирования')
-def test_create(booking_client):
-    fields = {
-        'firstname':'Naruto',
-        'lastname':'Uzumaki',
-        'totalprice':111,
-        'depositpaid':True,
-        'bookingdates':BookingDates(checkin='2026-06-15', checkout='2026-06-20'),
-        'additionalneeds':'ramen'
-    }
-
-    model = CreateBookingModel(**fields)
-
-    resp = booking_client.post_booking(model=model)
+def test_create(booking_client, booking_sample_create_model):
+    resp = booking_client.post_booking(model=booking_sample_create_model)
 
     resp_model = BookingResponseModel(**resp.json())
     
     assert resp.status_code == requests.codes['ok']
-    assert resp_model.booking == model
+    assert resp_model.booking == booking_sample_create_model
 
 @allure.feature("API")
 @allure.story("Create")
