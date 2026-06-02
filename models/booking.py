@@ -14,14 +14,13 @@ class BookingModel(BaseModel):
     additionalneeds: str | None = None
 
 
-class BookingResponseModel(BaseModel):
-    bookingid: int
-    booking: CreateBookingModel
-
-
 class CreateBookingModel(BookingModel):
     ...
 
+
+class BookingResponseModel(BaseModel):
+    bookingid: int
+    booking: CreateBookingModel
 
 class CreateBookingModelNoField(BaseModel):
     firstname: str | None = None
